@@ -1,5 +1,15 @@
+import math
 from fuel_opt.models import FuelStation
-from .distance import haversine
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    """Calculate distance between two coordinates in miles"""
+    R = 3959  # miles
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+    return 2 * R * math.asin(math.sqrt(a))
+
 
 def extract_fuel_stop_points(route, max_range=500):
     steps = route["routes"][0]["legs"][0]["steps"]
