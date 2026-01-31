@@ -24,7 +24,7 @@ A Django REST API that calculates optimal fuel stops along a route within the US
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/alirazahub/fuel_optimization-django
 cd fuel_route
 ```
 
