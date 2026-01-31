@@ -218,7 +218,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚗 Fuel Route Optimizer</h1>
+        <h1>Fuel Route Optimizer</h1>
         
         <div class="content-wrapper">
             <div class="form-section">
@@ -274,6 +274,13 @@
         let map;
         let directionsRenderer;
         let markers = [];
+
+        // Drop pin marker icons
+        const dropPinMarkers = {
+            red: 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40"%3E%3Cpath fill="%23f44336" d="M16 0C9.4 0 4 5.4 4 12c0 8 12 20 12 20s12-12 12-20c0-6.6-5.4-12-12-12z"/%3E%3Ccircle cx="16" cy="12" r="5" fill="white"/%3E%3C/svg%3E',
+            green: 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40"%3E%3Cpath fill="%234CAF50" d="M16 0C9.4 0 4 5.4 4 12c0 8 12 20 12 20s12-12 12-20c0-6.6-5.4-12-12-12z"/%3E%3Ccircle cx="16" cy="12" r="5" fill="white"/%3E%3C/svg%3E',
+            blue: 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40"%3E%3Cpath fill="%232196F3" d="M16 0C9.4 0 4 5.4 4 12c0 8 12 20 12 20s12-12 12-20c0-6.6-5.4-12-12-12z"/%3E%3Ccircle cx="16" cy="12" r="5" fill="white"/%3E%3C/svg%3E'
+        };
 
         function initMap() {
             // Initialize map centered on USA
@@ -371,12 +378,10 @@
                                 fontWeight: 'bold'
                             },
                             icon: {
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 15,
-                                fillColor: '#f44336',
-                                fillOpacity: 1,
-                                strokeColor: 'white',
-                                strokeWeight: 3
+                                url: dropPinMarkers.red,
+                                scaledSize: new google.maps.Size(32, 40),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(16, 40)
                             }
                         });
 
@@ -413,6 +418,48 @@
                 });
 
                 routePath.setMap(map);
+
+                // Add START location marker
+                const startMarker = new google.maps.Marker({
+                    position: decodedPath[0],
+                    map: map,
+                    title: `START: ${start}`,
+                    icon: {
+                        url: dropPinMarkers.green,
+                        scaledSize: new google.maps.Size(35, 44),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17.5, 44)
+                    }
+                });
+
+                const startWindow = new google.maps.InfoWindow({
+                    content: `<div style="padding: 10px; color: #333; font-weight: 600;"><strong>📍 START</strong><br><span style="color: #4CAF50;">${start}</span></div>`
+                });
+
+                startMarker.addListener('click', () => {
+                    startWindow.open(map, startMarker);
+                });
+
+                // Add END location marker
+                const endMarker = new google.maps.Marker({
+                    position: decodedPath[decodedPath.length - 1],
+                    map: map,
+                    title: `END: ${end}`,
+                    icon: {
+                        url: dropPinMarkers.red,
+                        scaledSize: new google.maps.Size(35, 44),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17.5, 44)
+                    }
+                });
+
+                const endWindow = new google.maps.InfoWindow({
+                    content: `<div style="padding: 10px; color: #333; font-weight: 600;"><strong>🏁 END</strong><br><span style="color: #f44336;">${end}</span></div>`
+                });
+
+                endMarker.addListener('click', () => {
+                    endWindow.open(map, endMarker);
+                });
 
                 // Fit map to route bounds
                 const bounds = new google.maps.LatLngBounds();
